@@ -1,6 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const alertMessage = document.getElementById('alertMessage');
+    const loginSection = document.getElementById('loginSection');
+    const welcomeSection = document.getElementById('welcomeSection');
+    const userNameDisplay = document.getElementById('userNameDisplay');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // Verificar si el usuario ya está autenticado
+    const usuarioGuardado = localStorage.getItem('nombreDeUsuario');
+    if (usuarioGuardado) {
+        mostrarBienvenida(usuarioGuardado);
+    }
 
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -23,7 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok && data.token) {
                 localStorage.setItem('jwtToken', data.token);
-                mostrarAlerta('success', `¡Bienvenido ${data.nombreDeUsuario || ''}! Inicio de sesión exitoso.`);
+                const nombreUsuario = data.nombreDeUsuario || correo;
+                localStorage.setItem('nombreDeUsuario', nombreUsuario);
+                
+                mostrarBienvenida(nombreUsuario);
             } else {
                 mostrarAlerta('error', data.mensaje || 'Credenciales incorrectas o error en el servidor.');
             }
@@ -31,6 +44,24 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarAlerta('error', 'No se pudo conectar con el servidor. Inténtalo nuevamente.');
         }
     });
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('jwtToken');
+            localStorage.removeItem('nombreDeUsuario');
+            
+            welcomeSection.style.display = 'none';
+            loginSection.style.display = 'block';
+            loginForm.reset();
+            ocultarAlerta();
+        });
+    }
+
+    function mostrarBienvenida(nombreUsuario) {
+        userNameDisplay.innerText = nombreUsuario;
+        loginSection.style.display = 'none';
+        welcomeSection.style.display = 'block';
+    }
 
     function mostrarAlerta(tipo, mensaje) {
         alertMessage.innerText = mensaje;

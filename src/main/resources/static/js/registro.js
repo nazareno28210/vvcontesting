@@ -11,9 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const correo = document.getElementById('correo').value.trim();
         const contrasena = document.getElementById('contrasena').value.trim();
 
-        const checkboxesRoles = document.querySelectorAll('input[name="roles"]:checked');
-        const roles = Array.from(checkboxesRoles).map(cb => cb.value);
-
         ocultarAlerta();
 
         const payload = {
@@ -21,8 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             apellido,
             nombreDeUsuario,
             correo,
-            contrasena,
-            roles
+            contrasena
         };
 
         try {

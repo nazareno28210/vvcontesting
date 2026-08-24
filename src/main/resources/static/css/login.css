@@ -140,3 +140,37 @@ body {
 .login-footer a:hover {
     text-decoration: underline;
 }
+
+.welcome-container {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.welcome-title {
+    font-size: 1.85rem;
+    color: #4ade80;
+    margin-bottom: 0.75rem;
+}
+
+.welcome-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.btn-logout {
+    background-color: #334155;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: #475569;
+}
+
