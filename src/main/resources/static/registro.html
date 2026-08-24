@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta - Registro</title>
+    <link rel="stylesheet" href="css/registro.css">
+</head>
+<body>
+
+    <div class="registro-container">
+        <div class="registro-header">
+            <h1>Crear una Cuenta</h1>
+            <p>Completa tus datos para registrarte en el sistema</p>
+        </div>
+
+        <form id="registroForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" placeholder="Juan" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" placeholder="Pérez" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="nombreDeUsuario">Nombre de Usuario</label>
+                <input type="text" id="nombreDeUsuario" placeholder="juanperez" required>
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo Electrónico</label>
+                <input type="email" id="correo" placeholder="ejemplo@correo.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+                <label>Selecciona tus Roles</label>
+                <div class="roles-container">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="roles" value="VISITANTE"> Visitante
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="roles" value="ORGANIZADOR"> Organizador
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="roles" value="FERIANTE"> Feriante
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="roles" value="ADMINISTRADOR"> Administrador
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-registro">Registrarse</button>
+        </form>
+
+        <div id="alertMessage" class="alert-message"></div>
+
+        <div class="registro-footer">
+            <p>¿Ya tienes una cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+        </div>
+    </div>
+
+    <script src="js/registro.js"></script>
+</body>
+</html>

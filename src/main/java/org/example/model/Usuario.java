@@ -1,19 +1,36 @@
 package org.example.model;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
+@Table(name = "usuarios")
 public class Usuario {
-    @Id //no usa generated, usa el id de la persona
+    @Id
     private Long id;
 
-    @OneToOne
-    @MapsId // Copia el id de la persona a la que pertenece el usuario
+    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
     @JoinColumn(name = "persona_id")
     private Persona persona;
+
+    @Column(nullable = false, unique = true)
     private String nombreDeUsuario;
+
+    @Column(nullable = false, unique = true)
     private String correo;
+
+    @Column(nullable = false)
     private String contrasena;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol")
+    private Set<Rol> roles = new HashSet<>();
+
+    public Usuario() {}
 
     public Usuario(Persona persona, String nombreDeUsuario, String correo, String contrasena) {
         this.persona = persona;
@@ -22,8 +39,20 @@ public class Usuario {
         this.contrasena = contrasena;
     }
 
+    public Usuario(Persona persona, String nombreDeUsuario, String correo, String contrasena, Set<Rol> roles) {
+        this.persona = persona;
+        this.nombreDeUsuario = nombreDeUsuario;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.roles = (roles != null) ? roles : new HashSet<>();
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Persona getPersona() {
@@ -56,5 +85,13 @@ public class Usuario {
 
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+    }
+
+    public Set<Rol> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Rol> roles) {
+        this.roles = roles;
     }
 }
