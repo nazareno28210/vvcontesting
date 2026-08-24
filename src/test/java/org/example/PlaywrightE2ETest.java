@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.TestPropertySource;
 
+import java.nio.file.Paths;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -23,8 +25,8 @@ public class PlaywrightE2ETest {
     @BeforeAll
     static void launchBrowser() {
         playwright = Playwright.create();
-        // launch(new BrowserType.LaunchOptions().setHeadless(true)) ejecuta el navegador en segundo plano.
-        // Si pones setHeadless(false), verás abrirse la ventana del navegador automáticamente.
+        // setHeadless(true) ejecuta el navegador en segundo plano.
+        // Si se establece en false, se abre la ventana gráfica del navegador.
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
     }
 
@@ -52,12 +54,15 @@ public class PlaywrightE2ETest {
     }
 
     @Test
-    void testFlujoCompletoRegistroYLoginConPlaywright() {
+    void testFlujoCompletoRegistroYLoginConCapturaDePantalla() {
         String baseUrl = "http://localhost:" + port;
 
         // 1. Navegar a la página de Registro
         page.navigate(baseUrl + "/registro.html");
         assertTrue(page.title().contains("Registro"), "El título de la página debe ser Crear Cuenta - Registro");
+
+        // Captura de pantalla de la página de registro
+        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("build/captura_registro.png")));
 
         // 2. Llenar el formulario de Registro simulando un usuario real
         page.fill("#nombre", "Carlos");
@@ -73,6 +78,9 @@ public class PlaywrightE2ETest {
         page.waitForURL("**/login.html", new Page.WaitForURLOptions().setTimeout(5000));
         assertTrue(page.url().contains("login.html"), "Debe redirigir a login.html tras registrarse");
 
+        // Captura de pantalla de la página de login
+        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("build/captura_login.png")));
+
         // 5. Llenar el formulario de Login con las credenciales creadas
         page.fill("#correo", "carlos@ejemplo.com");
         page.fill("#contrasena", "MiClaveSegura123");
@@ -86,5 +94,8 @@ public class PlaywrightE2ETest {
 
         assertEquals("carlosg", userNameDisplay.innerText(), "En pantalla debe mostrarse el nombre de usuario 'carlosg'");
         assertTrue(page.isVisible("#welcomeSection"), "El panel de bienvenida debe estar visible en pantalla");
+
+        // 8. Captura de pantalla final de la vista "Bienvenido, carlosg"
+        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("build/captura_bienvenido.png")));
     }
 }

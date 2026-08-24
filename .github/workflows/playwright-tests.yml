@@ -1,0 +1,38 @@
+name: Playwright E2E Tests Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del Repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Java JDK 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Otorgar Permisos de Ejecución a Gradlew
+        run: chmod +x gradlew
+
+      - name: Ejecutar Pruebas Automatizadas con Gradle
+        run: ./gradlew test
+
+      - name: Subir Reporte de Pruebas en Caso de Fallo
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-reports
+          path: |
+            build/reports/tests/test/
+            build/reports/screenshots/
+            build/reports/traces/
+          retention-days: 30
