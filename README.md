@@ -1,63 +1,45 @@
-# (V&VconTesting)
----
+# V&VconTesting — Automation & E2E Testing Suite
 
-## 🏛️ Arquitectura Estructurada (Page Object Model)
-
-El proyecto utiliza el patrón **Page Object Model (POM)** para abstraer la estructura y manipulación de las páginas web, separando la interacción con la interfaz de la lógica de las pruebas:
-
-- [`RegistroPage`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/pages/RegistroPage.java): Abstracción del formulario de registro y sus selectores DOM.
-- [`LoginPage`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/pages/LoginPage.java): Encapsulamiento del flujo de inicio de sesión y gestión de mensajes de error.
-- [`DashboardPage`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/pages/DashboardPage.java): Validación del panel principal post-autenticación.
-- [`BaseTest`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/BaseTest.java): Clase base que gestiona el ciclo de vida del navegador Chromium, contextos de Playwright, trazado y captura de evidencias.
+Suite de pruebas end-to-end (E2E) con **Playwright Java**, **JUnit 5** y **Spring Boot Test** enfocada en la validación resiliente del sistema de autenticación.
 
 ---
 
-## 📊 Gestión de Calidad y Casos de Prueba
+## 🎯 Principios de Testing Resiliente
 
-Se cubren múltiples requisitos verificables formalizados en la suite de pruebas E2E ([`PlaywrightE2ETest`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/PlaywrightE2ETest.java) y [`LoginTest`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/LoginTest.java)):
+La arquitectura de pruebas cumple rigurosamente con los 5 pilares de calidad:
 
-1. **Navegación y Título**: Verificación del título y estructura inicial en páginas de Login y Registro.
-2. **Registro de Usuario Exitoso**: Llenado del formulario de registro con datos válidos.
-3. **Redirección Automatizada**: Verificación de redirección a `login.html` tras completar el registro.
-4. **Login Exitoso**: Autenticación correcta utilizando credenciales recién registradas.
-5. **Redirección al Dashboard**: Verificación de carga de `index.html` post-login.
-6. **Validación de Identidad**: Confirmación de despliegue dinámico del nombre de usuario en pantalla (`#userNameDisplay`).
-7. **Control de Errores en Login**: Validación de mensajes de error ante credenciales inválidas.
-8. **Captura Continuada de Estado**: Generación de screenshots en puntos clave del flujo.
+1. **Aislamiento por Prueba (`BaseTest`)**: Cada prueba corre en su propio navegador y contexto limpio (`BrowserContext`), evitando contaminación de sesiones o estados de pruebas previas.
+2. **Localizadores Accesibles y Resilientes**: Uso prioritario de `getByLabel` y `getByRole` en las clases Page Object para imitar la interacción del usuario real y soportar refactorizaciones de HTML/CSS sin romper las pruebas.
+3. **Aserciones Automáticas con Espera Intuitiva**: Empleo de `PlaywrightAssertions` (`assertThat(page).hasTitle()`, `assertThat(page).hasURL()`), eliminando esperas fijas (`Thread.sleep`).
+4. **Cobertura Completa (Happy Path & Sad Path)**: Se validan tanto los flujos correctos (registro y login exitoso) como los escenarios de error (contraseñas no coincidentes, credenciales inválidas).
+5. **Evidencia Diagnóstica Automática**: Ante fallos, `TestWatcher` captura automáticamente capturas de pantalla (`build/screenshots/`) y trazas completas de Playwright (`build/traces/`).
 
 ---
 
-## 🔄 CI/CD y Evidencia de Fallos
+## 🏛️ Arquitectura Page Object Model (POM)
 
-### GitHub Actions Pipeline
-El archivo de flujo de trabajo [`.github/workflows/playwright-tests.yml`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/.github/workflows/playwright-tests.yml) ejecuta automáticamente la suite de pruebas en cada `push` o `pull_request` a la rama `main`.
-
-### Captura de Evidencias & Trace Viewer
-Ante cualquier fallo en la ejecución:
-- **Screenshots:** Se almacena una captura del estado exacto de la pantalla en `build/reports/screenshots/`.
-- **Playwright Trace Viewer:** Se genera un archivo comprimido de traza `.zip` en `build/reports/traces/` que permite inspeccionar la ejecución paso a paso mediante Playwright Trace Viewer.
-- **Artefactos en GitHub Actions:** Ambos reportes se suben automáticamente como artefactos del pipeline con una retención de 30 días.
+- [`BaseTest`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/BaseTest.java): Configuración del servidor embebido Spring Boot, ciclo de vida del navegador, *Tracing* y captura de pantalla ante fallos.
+- [`LoginPage`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/pages/LoginPage.java): Encapsulamiento del formulario de login y sus localizadores accesibles.
+- [`RegistroPage`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/pages/RegistroPage.java): Abstracción del formulario de registro de usuario.
+- [`LoginTest`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/tests/LoginTest.java): Pruebas E2E del módulo de inicio de sesión.
+- [`RegistrarseTest`](file:///c:/Users/Usuario/IdeaProjects/vvcontesting/src/test/java/org/example/tests/RegistrarseTest.java): Pruebas E2E del módulo de registro.
 
 ---
 
-## 🚀 Instalación y Ejecución
+## 🚀 Requisitos y Ejecución de Pruebas
 
 ### Prerrequisitos
 - **Java JDK 21** o superior.
 - **Gradle Wrapper** (incluido en el proyecto).
 
-### Ejecutar la Aplicación Web
-```bash
-./gradlew bootRun
-```
-*La aplicación estará disponible en `http://localhost:8080`.*
-
-### Ejecutar Suite de Pruebas Automatizadas (E2E)
+### Ejecutar Suite Completa de Pruebas
 ```bash
 ./gradlew test
 ```
 
-### Visualizar Traza de Playwright (en caso de fallo)
+### Inspección de Evidencias en Caso de Fallo
+- **Screenshots de fallos:** `build/screenshots/failure-<nombre_prueba>.png`
+- **Trace Viewer de Playwright:** `build/traces/trace-<nombre_prueba>.zip`
 ```bash
-npx playwright show-trace build/reports/traces/<nombre_de_prueba>-trace.zip
+npx playwright show-trace build/traces/trace-testLoginConCredencialesInvalidas().zip
 ```

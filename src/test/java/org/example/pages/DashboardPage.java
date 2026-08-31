@@ -2,32 +2,28 @@ package org.example.pages;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 
 public class DashboardPage {
-
     private final Page page;
-    private final Locator userNameDisplay;
-    private final Locator welcomeSection;
     private final Locator logoutButton;
+    private final Locator userNameDisplay;
 
     public DashboardPage(Page page) {
         this.page = page;
+        this.logoutButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Cerrar Sesión"));
         this.userNameDisplay = page.locator("#userNameDisplay");
-        this.welcomeSection = page.locator("#welcomeSection");
-        this.logoutButton = page.locator("#logoutBtn");
     }
 
-    public String obtenerNombreBienvenida() {
-        userNameDisplay.waitFor();
-        return userNameDisplay.innerText();
-    }
-
-    public boolean isWelcomeVisible() {
-        welcomeSection.waitFor();
-        return welcomeSection.isVisible();
-    }
-
-    public void clickCerrarSesion() {
+    public void cerrarSesion() {
         logoutButton.click();
+    }
+
+    public Locator getUserNameDisplay() {
+        return userNameDisplay;
+    }
+
+    public Locator getLogoutButton() {
+        return logoutButton;
     }
 }

@@ -1,54 +1,48 @@
 package org.example;
 
 import com.microsoft.playwright.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
+
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.extension.TestWatcher;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.nio.file.Paths;
-import java.util.Optional;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(locations = "classpath:application-test.properties")
-public abstract class BaseTest {
-
-    @LocalServerPort
-    protected int port;
-
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("test")
+@ExtendWith(BaseTest.TestResultLogger.class)
+public class BaseTest {
     protected Playwright playwright;
     protected Browser browser;
     protected BrowserContext context;
     protected Page page;
 
-    protected String getBaseUrl() {
-        return "http://localhost:" + port;
-    }
+    private static final ThreadLocal<Page> activePage = new ThreadLocal<>();
 
     @BeforeEach
-    void setUpBase() {
+    void setUp() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-        
+        browser = playwright.chromium().launch(
+                new BrowserType.LaunchOptions().setHeadless(false)
+        );
         context = browser.newContext();
-        
-        // Iniciar Tracing para capturar screenshots, snapshots y fuentes
         context.tracing().start(new Tracing.StartOptions()
                 .setScreenshots(true)
                 .setSnapshots(true)
                 .setSources(true));
-
         page = context.newPage();
+        activePage.set(page);
     }
 
     @AfterEach
-    void tearDownBase() {
-        // En caso de querer guardar siempre o al finalizar la prueba
+    void closeContext(TestInfo testInfo) {
+        activePage.remove();
         if (context != null) {
+            context.tracing().stop(new Tracing.StopOptions()
+                    .setPath(Paths.get("build/traces/trace-" + testInfo.getDisplayName() + ".zip")));
             context.close();
         }
         if (browser != null) {
@@ -59,24 +53,14 @@ public abstract class BaseTest {
         }
     }
 
-    @RegisterExtension
-    TestWatcher watcher = new TestWatcher() {
+    public static class TestResultLogger implements TestWatcher {
         @Override
         public void testFailed(ExtensionContext extensionContext, Throwable cause) {
-            String testName = extensionContext.getDisplayName().replaceAll("[^a-zA-Z0-9_-]", "_");
-            
-            try {
-                // Guardar captura de pantalla al fallar
+            Page page = activePage.get();
+            if (page != null && !page.isClosed()) {
                 page.screenshot(new Page.ScreenshotOptions()
-                        .setPath(Paths.get("build/reports/screenshots/" + testName + "-failure.png"))
-                        .setFullPage(true));
-
-                // Guardar archivo de traza ZIP
-                context.tracing().stop(new Tracing.StopOptions()
-                        .setPath(Paths.get("build/reports/traces/" + testName + "-trace.zip")));
-            } catch (Exception e) {
-                System.err.println("No se pudo capturar la evidencia del fallo: " + e.getMessage());
+                        .setPath(Paths.get("build/screenshots/failure-" + extensionContext.getDisplayName() + ".png")));
             }
         }
-    };
+    }
 }
