@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Cuenta - Registro</title>
     <link rel="stylesheet" href="css/registro.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
 
@@ -18,17 +21,17 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
-                    <input type="text" id="nombre" placeholder="Juan" required>
+                    <input type="text" id="nombre" placeholder="Juan" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="No se permiten números" required>
                 </div>
                 <div class="form-group">
                     <label for="apellido">Apellido</label>
-                    <input type="text" id="apellido" placeholder="Pérez" required>
+                    <input type="text" id="apellido" placeholder="Pérez" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" title="No se permiten números" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="nombreDeUsuario">Nombre de Usuario</label>
-                <input type="text" id="nombreDeUsuario" placeholder="juanperez" required>
+                <input type="text" id="nombreDeUsuario" placeholder="juanperez" minlength="5" required>
             </div>
 
             <div class="form-group">
@@ -38,7 +41,48 @@
 
             <div class="form-group">
                 <label for="contrasena">Contraseña</label>
-                <input type="password" id="contrasena" placeholder="••••••••" required>
+                <div class="password-wrapper">
+                    <input type="password" id="contrasena" placeholder="••••••••" required>
+                    <button type="button" class="toggle-password-btn" aria-label="Mostrar contraseña">
+                        <svg class="eye-icon eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <svg class="eye-icon eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                            <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                            <line x1="2" x2="22" y1="2" y2="22"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmarContrasena">Confirmar Contraseña</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirmarContrasena" placeholder="••••••••" required>
+                    <button type="button" class="toggle-password-btn" aria-label="Mostrar contraseña">
+                        <svg class="eye-icon eye-open" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <svg class="eye-icon eye-closed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                            <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+                            <line x1="2" x2="22" y1="2" y2="22"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="password-requirements" id="passwordRequirements">
+                    <span id="reqLength" class="requirement-item">✕ Mínimo 8 caracteres</span>
+                    <span id="reqUppercase" class="requirement-item">✕ Al menos una mayúscula</span>
+                    <span id="reqLowercase" class="requirement-item">✕ Al menos una minúscula</span>
+                    <span id="reqNumber" class="requirement-item">✕ Al menos un número</span>
+                    <span id="reqSpecial" class="requirement-item">✕ Al menos un carácter especial (!@#$%...)</span>
+                    <span id="reqMatch" class="requirement-item">✕ Las contraseñas coinciden</span>
+                </div>
             </div>
 
 

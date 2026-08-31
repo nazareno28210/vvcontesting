@@ -172,3 +172,71 @@ body {
 .registro-footer a:hover {
     text-decoration: underline;
 }
+
+/* Estado de validación de inputs */
+.form-group input.invalid {
+    border-color: var(--error-color) !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.form-group input.valid {
+    border-color: var(--success-color) !important;
+}
+
+/* Indicadores de requisitos de contraseña */
+.password-requirements {
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.requirement-item {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.2s ease;
+}
+
+.requirement-item.met {
+    color: #4ade80;
+    font-weight: 500;
+}
+
+/* Estilos para campos de contraseña con botón toggle SVG */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-wrapper input {
+    padding-right: 2.75rem;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    transition: color 0.2s;
+}
+
+.toggle-password-btn:hover {
+    color: var(--text-color);
+}
+
+/* Ocultar el icono nativo de ver contraseña del navegador (Edge/IE) */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none !important;
+}

@@ -7,15 +7,19 @@ public class AuthResponseDto {
     private String tokenType = "Bearer";
     private String correo;
     private String nombreDeUsuario;
+    private String nombre;
+    private String apellido;
     private Set<String> roles;
     private String mensaje;
 
     public AuthResponseDto() {}
 
-    public AuthResponseDto(String token, String correo, String nombreDeUsuario, Set<String> roles, String mensaje) {
+    public AuthResponseDto(String token, String correo, String nombreDeUsuario, String nombre, String apellido, Set<String> roles, String mensaje) {
         this.token = token;
         this.correo = correo;
         this.nombreDeUsuario = nombreDeUsuario;
+        this.nombre = nombre;
+        this.apellido = apellido;
         this.roles = roles;
         this.mensaje = mensaje;
     }
@@ -54,6 +58,22 @@ public class AuthResponseDto {
 
     public void setNombreDeUsuario(String nombreDeUsuario) {
         this.nombreDeUsuario = nombreDeUsuario;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
     }
 
     public Set<String> getRoles() {

@@ -9,16 +9,18 @@ public class RegistroRequestDto {
     private String nombreDeUsuario;
     private String correo;
     private String contrasena;
+    private String confirmarContrasena;
     private Set<Rol> roles;
 
     public RegistroRequestDto() {}
 
-    public RegistroRequestDto(String nombre, String apellido, String nombreDeUsuario, String correo, String contrasena, Set<Rol> roles) {
+    public RegistroRequestDto(String nombre, String apellido, String nombreDeUsuario, String correo, String contrasena, String confirmarContrasena, Set<Rol> roles) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.nombreDeUsuario = nombreDeUsuario;
         this.correo = correo;
         this.contrasena = contrasena;
+        this.confirmarContrasena = confirmarContrasena;
         this.roles = roles;
     }
 
@@ -60,6 +62,14 @@ public class RegistroRequestDto {
 
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+    }
+
+    public String getConfirmarContrasena() {
+        return confirmarContrasena;
+    }
+
+    public void setConfirmarContrasena(String confirmarContrasena) {
+        this.confirmarContrasena = confirmarContrasena;
     }
 
     public Set<Rol> getRoles() {

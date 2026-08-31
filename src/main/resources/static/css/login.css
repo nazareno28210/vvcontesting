@@ -174,3 +174,39 @@ body {
     background-color: #475569;
 }
 
+/* Estilos para el campo de contraseña con botón toggle SVG */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-wrapper input {
+    padding-right: 2.75rem;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    transition: color 0.2s;
+}
+
+.toggle-password-btn:hover {
+    color: var(--text-color);
+}
+
+/* Ocultar el icono nativo de ver contraseña del navegador (Edge/IE) */
+input::-ms-reveal,
+input::-ms-clear {
+    display: none !important;
+}
+

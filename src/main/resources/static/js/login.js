@@ -1,15 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
-    const alertMessage = document.getElementById('alertMessage');
     const loginSection = document.getElementById('loginSection');
     const welcomeSection = document.getElementById('welcomeSection');
     const userNameDisplay = document.getElementById('userNameDisplay');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    // Verificar si el usuario ya está autenticado
-    const usuarioGuardado = localStorage.getItem('nombreDeUsuario');
-    if (usuarioGuardado) {
-        mostrarBienvenida(usuarioGuardado);
+    // Configurar toggle para ver/ocultar contraseña
+    document.querySelectorAll('.toggle-password-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const input = button.parentElement.querySelector('input');
+            const eyeOpen = button.querySelector('.eye-open');
+            const eyeClosed = button.querySelector('.eye-closed');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeOpen.style.display = 'none';
+                eyeClosed.style.display = 'block';
+            } else {
+                input.type = 'password';
+                eyeOpen.style.display = 'block';
+                eyeClosed.style.display = 'none';
+            }
+        });
+    });
+
+    // Si ya existe token, redirigir a index.html
+    if (localStorage.getItem('jwtToken')) {
+        window.location.href = 'index.html';
+        return;
     }
 
     loginForm.addEventListener('submit', async (event) => {
@@ -18,59 +36,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const correo = document.getElementById('correo').value.trim();
         const contrasena = document.getElementById('contrasena').value.trim();
 
-        ocultarAlerta();
-
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ correo, contrasena })
-            });
+            const response = await axios.post('/api/auth/login', { correo, contrasena });
 
-            const data = await response.json();
-
-            if (response.ok && data.token) {
-                localStorage.setItem('jwtToken', data.token);
-                const nombreUsuario = data.nombreDeUsuario || correo;
-                localStorage.setItem('nombreDeUsuario', nombreUsuario);
+            if (response.data && response.data.token) {
+                localStorage.setItem('jwtToken', response.data.token);
+                localStorage.setItem('nombreDeUsuario', response.data.nombreDeUsuario || correo);
+                localStorage.setItem('nombre', response.data.nombre || '');
+                localStorage.setItem('apellido', response.data.apellido || '');
                 
-                mostrarBienvenida(nombreUsuario);
-            } else {
-                mostrarAlerta('error', data.mensaje || 'Credenciales incorrectas o error en el servidor.');
+                mostrarNotificacion('¡Inicio de sesión exitoso!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 800);
             }
         } catch (error) {
-            mostrarAlerta('error', 'No se pudo conectar con el servidor. Inténtalo nuevamente.');
+            const mensaje = error.response && error.response.data && error.response.data.mensaje 
+                ? error.response.data.mensaje 
+                : 'Credenciales incorrectas o error en el servidor.';
+            mostrarNotificacion(mensaje, 'error');
         }
     });
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('jwtToken');
-            localStorage.removeItem('nombreDeUsuario');
-            
-            welcomeSection.style.display = 'none';
-            loginSection.style.display = 'block';
-            loginForm.reset();
-            ocultarAlerta();
-        });
-    }
-
-    function mostrarBienvenida(nombreUsuario) {
-        userNameDisplay.innerText = nombreUsuario;
-        loginSection.style.display = 'none';
-        welcomeSection.style.display = 'block';
-    }
-
-    function mostrarAlerta(tipo, mensaje) {
-        alertMessage.innerText = mensaje;
-        alertMessage.className = 'alert-message ' + (tipo === 'success' ? 'alert-success' : 'alert-error');
-        alertMessage.style.display = 'block';
-    }
-
-    function ocultarAlerta() {
-        alertMessage.style.display = 'none';
-        alertMessage.innerText = '';
+    function mostrarNotificacion(mensaje, tipo = 'error') {
+        Toastify({
+            text: mensaje,
+            duration: 3000,
+            gravity: "bottom",
+            position: "center",
+            stopOnFocus: true,
+            style: {
+                background: tipo === 'success' ? "linear-gradient(to right, #22c55e, #16a34a)" : "linear-gradient(to right, #ef4444, #dc2626)",
+                borderRadius: "8px",
+                fontSize: "0.9rem",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+            }
+        }).showToast();
     }
 });

@@ -11,6 +11,7 @@ public class RegistroPage {
     private final Locator usuarioInput;
     private final Locator correoInput;
     private final Locator contrasenaInput;
+    private final Locator confirmarContrasenaInput;
     private final Locator registrarButton;
 
     public RegistroPage(Page page) {
@@ -20,6 +21,7 @@ public class RegistroPage {
         this.usuarioInput = page.locator("#nombreDeUsuario");
         this.correoInput = page.locator("#correo");
         this.contrasenaInput = page.locator("#contrasena");
+        this.confirmarContrasenaInput = page.locator("#confirmarContrasena");
         this.registrarButton = page.locator(".btn-registro");
     }
 
@@ -33,6 +35,7 @@ public class RegistroPage {
         usuarioInput.fill(usuario);
         correoInput.fill(correo);
         contrasenaInput.fill(contrasena);
+        confirmarContrasenaInput.fill(contrasena);
         registrarButton.click();
     }
 }

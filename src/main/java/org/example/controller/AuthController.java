@@ -7,6 +7,7 @@ import org.example.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -43,6 +44,21 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new AuthResponseDto("Error en el inicio de sesión: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> obtenerUsuarioActual(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthResponseDto("No autenticado."));
+        }
+        try {
+            AuthResponseDto response = authService.obtenerPerfil(authentication.getName());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthResponseDto("Error al obtener perfil: " + e.getMessage()));
         }
     }
 }

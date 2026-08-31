@@ -40,6 +40,38 @@ public class AuthService {
 
     @Transactional
     public AuthResponseDto registrar(RegistroRequestDto request) {
+        if (request.getNombre() == null || request.getNombre().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El nombre no debe contener números.");
+        }
+
+        if (request.getApellido() == null || request.getApellido().matches(".*\\d.*")) {
+            throw new IllegalArgumentException("El apellido no debe contener números.");
+        }
+
+        if (request.getNombreDeUsuario() == null || request.getNombreDeUsuario().trim().length() < 5) {
+            throw new IllegalArgumentException("El nombre de usuario debe tener al menos 5 caracteres.");
+        }
+
+        String pass = request.getContrasena();
+        if (pass == null || pass.length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres.");
+        }
+        if (!pass.matches(".*[A-Z].*")) {
+            throw new IllegalArgumentException("La contraseña debe incluir al menos una letra mayúscula.");
+        }
+        if (!pass.matches(".*[a-z].*")) {
+            throw new IllegalArgumentException("La contraseña debe incluir al menos una letra minúscula.");
+        }
+        if (!pass.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("La contraseña debe incluir al menos un número.");
+        }
+        if (!pass.matches(".*[^a-zA-Z0-9].*")) {
+            throw new IllegalArgumentException("La contraseña debe incluir al menos un carácter especial.");
+        }
+        if (!pass.equals(request.getConfirmarContrasena())) {
+            throw new IllegalArgumentException("Las contraseñas no coinciden.");
+        }
+
         if (usuarioRepository.existsByCorreo(request.getCorreo())) {
             throw new IllegalArgumentException("El correo '" + request.getCorreo() + "' ya se encuentra registrado.");
         }
@@ -55,7 +87,7 @@ public class AuthService {
         if (request.getRoles() != null && !request.getRoles().isEmpty()) {
             roles.addAll(request.getRoles());
         } else {
-            roles.add(Rol.VISITANTE);
+            roles.add(Rol.USUARIO);
         }
 
         Usuario usuario = new Usuario(persona, request.getNombreDeUsuario(), request.getCorreo(), contrasenaEncriptada, roles);
@@ -67,6 +99,8 @@ public class AuthService {
                 null,
                 usuario.getCorreo(),
                 usuario.getNombreDeUsuario(),
+                persona.getNombre(),
+                persona.getApellido(),
                 rolesString,
                 "Usuario registrado exitosamente."
         );
@@ -84,13 +118,36 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
         Set<String> rolesString = usuario.getRoles().stream().map(Enum::name).collect(Collectors.toSet());
+        String nombre = (usuario.getPersona() != null) ? usuario.getPersona().getNombre() : "";
+        String apellido = (usuario.getPersona() != null) ? usuario.getPersona().getApellido() : "";
 
         return new AuthResponseDto(
                 token,
                 usuario.getCorreo(),
                 usuario.getNombreDeUsuario(),
+                nombre,
+                apellido,
                 rolesString,
                 "Inicio de sesión exitoso."
+        );
+    }
+
+    public AuthResponseDto obtenerPerfil(String correo) {
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+        Set<String> rolesString = usuario.getRoles().stream().map(Enum::name).collect(Collectors.toSet());
+        String nombre = (usuario.getPersona() != null) ? usuario.getPersona().getNombre() : "";
+        String apellido = (usuario.getPersona() != null) ? usuario.getPersona().getApellido() : "";
+
+        return new AuthResponseDto(
+                null,
+                usuario.getCorreo(),
+                usuario.getNombreDeUsuario(),
+                nombre,
+                apellido,
+                rolesString,
+                "Perfil obtenido con éxito."
         );
     }
 }

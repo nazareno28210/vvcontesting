@@ -69,7 +69,8 @@ public class PlaywrightE2ETest {
         page.fill("#apellido", "Gomez");
         page.fill("#nombreDeUsuario", "carlosg");
         page.fill("#correo", "carlos@ejemplo.com");
-        page.fill("#contrasena", "MiClaveSegura123");
+        page.fill("#contrasena", "MiClaveSegura123!");
+        page.fill("#confirmarContrasena", "MiClaveSegura123!");
 
         // 3. Hacer clic en el botón de Registrarse
         page.click(".btn-registro");
@@ -83,19 +84,21 @@ public class PlaywrightE2ETest {
 
         // 5. Llenar el formulario de Login con las credenciales creadas
         page.fill("#correo", "carlos@ejemplo.com");
-        page.fill("#contrasena", "MiClaveSegura123");
+        page.fill("#contrasena", "MiClaveSegura123!");
 
         // 6. Hacer clic en el botón de Ingresar
         page.click(".btn-login");
 
-        // 7. Validar que aparezca en pantalla el texto de bienvenida con el nombre de usuario
+        // 7. Validar que redirija a index.html y muestre el nombre del usuario
+        page.waitForURL("**/index.html", new Page.WaitForURLOptions().setTimeout(5000));
+        assertTrue(page.url().contains("index.html"), "Debe redirigir a index.html tras iniciar sesión");
+
         Locator userNameDisplay = page.locator("#userNameDisplay");
         userNameDisplay.waitFor(new Locator.WaitForOptions().setTimeout(5000));
 
-        assertEquals("carlosg", userNameDisplay.innerText(), "En pantalla debe mostrarse el nombre de usuario 'carlosg'");
-        assertTrue(page.isVisible("#welcomeSection"), "El panel de bienvenida debe estar visible en pantalla");
+        assertTrue(userNameDisplay.innerText().contains("Carlos"), "En pantalla debe mostrarse el nombre del usuario");
 
-        // 8. Captura de pantalla final de la vista "Bienvenido, carlosg"
+        // 8. Captura de pantalla final de la vista principal
         page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("build/captura_bienvenido.png")));
     }
 }

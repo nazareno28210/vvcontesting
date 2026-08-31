@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal - Bienvenido</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+    <div class="dashboard-container" id="dashboardContainer" style="display: none;">
+        <header class="dashboard-header">
+            <div class="user-badge">
+                <div class="avatar-circle" id="avatarInitial">U</div>
+                <div class="user-info-text">
+                    <span class="user-handle" id="userHandle">@usuario</span>
+                    <span class="user-email" id="userEmail">correo@ejemplo.com</span>
+                </div>
+            </div>
+            <button id="logoutBtn" type="button" class="btn-logout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" x2="9" y1="12" y2="12"/>
+                </svg>
+                Cerrar Sesión
+            </button>
+        </header>
+
+        <main class="dashboard-content">
+            <div class="welcome-card">
+                <div class="badge-tag">Autenticado</div>
+                <h1>¡Bienvenido, <span id="userNameDisplay">Cargando...</span>!</h1>
+                <p>Has accedido correctamente al sistema de forma segura.</p>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Nombre de Usuario</span>
+                        <span class="info-value" id="infoNickname">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Correo Registrado</span>
+                        <span class="info-value" id="infoEmail">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Rol Asignado</span>
+                        <span class="info-value" id="infoRoles">-</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/index.js"></script>
+</body>
+</html>
